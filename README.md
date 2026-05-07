@@ -1,10 +1,10 @@
-# Karpathy-Inspired Claude Code Guidelines
+# Karpathy-Inspired GPT/Codex Guidelines
 
-> Check out my new project [Multica](https://github.com/multica-ai/multica) — an open-source platform for running and managing coding agents with reusable skills.
+> Check out my new project [Multica](https://github.com/multica-ai/multica) - an open-source platform for running and managing coding agents with reusable skills.
 >
 > Follow me on X: [https://x.com/jiayuan_jy](https://x.com/jiayuan_jy)
 
-A single `CLAUDE.md` file to improve Claude Code behavior, derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876) on LLM coding pitfalls.
+A single `AGENTS.md` file and reusable Codex skill to improve GPT/Codex coding behavior, derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876) on LLM coding pitfalls.
 
 English | [简体中文](./README.zh.md)
 
@@ -27,7 +27,7 @@ Four principles in one file that directly address these issues:
 | **Think Before Coding** | Wrong assumptions, hidden confusion, missing tradeoffs |
 | **Simplicity First** | Overcomplication, bloated abstractions |
 | **Surgical Changes** | Orthogonal edits, touching code you shouldn't |
-| **Goal-Driven Execution** | Leverage through tests-first, verifiable success criteria |
+| **Goal-Driven Execution** | Tests-first leverage and verifiable success criteria |
 
 ## The Four Principles in Detail
 
@@ -37,10 +37,10 @@ Four principles in one file that directly address these issues:
 
 LLMs often pick an interpretation silently and run with it. This principle forces explicit reasoning:
 
-- **State assumptions explicitly** — If uncertain, ask rather than guess
-- **Present multiple interpretations** — Don't pick silently when ambiguity exists
-- **Push back when warranted** — If a simpler approach exists, say so
-- **Stop when confused** — Name what's unclear and ask for clarification
+- **State assumptions explicitly** - If uncertain, ask rather than guess
+- **Present multiple interpretations** - Don't pick silently when ambiguity exists
+- **Push back when warranted** - If a simpler approach exists, say so
+- **Stop when confused** - Name what's unclear and ask for clarification
 
 ### 2. Simplicity First
 
@@ -65,7 +65,7 @@ When editing existing code:
 - Don't "improve" adjacent code, comments, or formatting
 - Don't refactor things that aren't broken
 - Match existing style, even if you'd do it differently
-- If you notice unrelated dead code, mention it — don't delete it
+- If you notice unrelated dead code, mention it - don't delete it
 
 When your changes create orphans:
 
@@ -88,46 +88,57 @@ Transform imperative tasks into verifiable goals:
 
 For multi-step tasks, state a brief plan:
 
-```
-1. [Step] → verify: [check]
-2. [Step] → verify: [check]
-3. [Step] → verify: [check]
+```text
+1. [Step] -> verify: [check]
+2. [Step] -> verify: [check]
+3. [Step] -> verify: [check]
 ```
 
 Strong success criteria let the LLM loop independently. Weak criteria ("make it work") require constant clarification.
 
 ## Install
 
-**Option A: Claude Code Plugin (recommended)**
+**Option A: Codex/GPT plugin or skill (recommended)**
 
-From within Claude Code, first add the marketplace:
-```
-/plugin marketplace add forrestchang/andrej-karpathy-skills
+This repo is now GPT/Codex-oriented:
+
+- [`.codex-plugin/plugin.json`](.codex-plugin/plugin.json) exposes the local Codex plugin manifest
+- [`skills/karpathy-guidelines/SKILL.md`](skills/karpathy-guidelines/SKILL.md) is the reusable skill
+- [`AGENTS.md`](AGENTS.md) is the per-project instruction file
+
+Install the skill locally for Codex:
+
+```powershell
+$skills = Join-Path $env:USERPROFILE ".codex\skills"
+New-Item -ItemType Directory -Force -Path $skills | Out-Null
+Copy-Item -Recurse -Force ".\skills\karpathy-guidelines" $skills
 ```
 
-Then install the plugin:
-```
-/plugin install andrej-karpathy-skills@karpathy-skills
+On macOS or Linux:
+
+```bash
+mkdir -p ~/.codex/skills
+cp -R skills/karpathy-guidelines ~/.codex/skills/
 ```
 
-This installs the guidelines as a Claude Code plugin, making the skill available across all your projects.
-
-**Option B: CLAUDE.md (per-project)**
+**Option B: `AGENTS.md` (per-project)**
 
 New project:
-```bash
-curl -o CLAUDE.md https://raw.githubusercontent.com/forrestchang/andrej-karpathy-skills/main/CLAUDE.md
+
+```powershell
+Copy-Item .\AGENTS.md D:\path\to\project\AGENTS.md
 ```
 
 Existing project (append):
-```bash
-echo "" >> CLAUDE.md
-curl https://raw.githubusercontent.com/forrestchang/andrej-karpathy-skills/main/CLAUDE.md >> CLAUDE.md
+
+```powershell
+Add-Content D:\path\to\project\AGENTS.md ""
+Get-Content .\AGENTS.md | Add-Content D:\path\to\project\AGENTS.md
 ```
 
 ## Using with Cursor
 
-This repository includes a committed Cursor project rule ([`.cursor/rules/karpathy-guidelines.mdc`](.cursor/rules/karpathy-guidelines.mdc)) so the same guidelines apply when you open the project in Cursor. See **[CURSOR.md](CURSOR.md)** for setup, using the rule in other projects, and how this relates to Claude Code.
+This repository includes a committed Cursor project rule ([`.cursor/rules/karpathy-guidelines.mdc`](.cursor/rules/karpathy-guidelines.mdc)) so the same guidelines apply when you open the project in Cursor. See **[CURSOR.md](CURSOR.md)** for setup, using the rule in other projects, and how this relates to GPT/Codex.
 
 ## Key Insight
 
@@ -141,14 +152,14 @@ The "Goal-Driven Execution" principle captures this: transform imperative instru
 
 These guidelines are working if you see:
 
-- **Fewer unnecessary changes in diffs** — Only requested changes appear
-- **Fewer rewrites due to overcomplication** — Code is simple the first time
-- **Clarifying questions come before implementation** — Not after mistakes
-- **Clean, minimal PRs** — No drive-by refactoring or "improvements"
+- **Fewer unnecessary changes in diffs** - Only requested changes appear
+- **Fewer rewrites due to overcomplication** - Code is simple the first time
+- **Clarifying questions come before implementation** - Not after mistakes
+- **Clean, minimal PRs** - No drive-by refactoring or "improvements"
 
 ## Customization
 
-These guidelines are designed to be merged with project-specific instructions. Add them to your existing `CLAUDE.md` or create a new one.
+These guidelines are designed to be merged with project-specific instructions. Add them to your existing `AGENTS.md` or create a new one.
 
 For project-specific rules, add sections like:
 
@@ -162,7 +173,7 @@ For project-specific rules, add sections like:
 
 ## Tradeoff Note
 
-These guidelines bias toward **caution over speed**. For trivial tasks (simple typo fixes, obvious one-liners), use judgment — not every change needs the full rigor.
+These guidelines bias toward **caution over speed**. For trivial tasks (simple typo fixes, obvious one-liners), use judgment - not every change needs the full rigor.
 
 The goal is reducing costly mistakes on non-trivial work, not slowing down simple tasks.
 
